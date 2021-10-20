@@ -1,7 +1,9 @@
 const express = require("express");
 
 const app = express();
+const cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
 
 let notes = [
@@ -23,15 +25,24 @@ let notes = [
     date: "2019-05-30T19:20:14.298Z",
     important: true,
   },
+  {
+    id: 4,
+    content: "front and back are connected",
+    date: "2021-05-30T19:20:14.298Z",
+    important: true,
+  },
 ];
 
 app.get("/", (request, response) => {
   response.send("<div> <h1>helo harry</h1> <h3>this is test</h3></div>");
 });
+app.get("/app/notes", (request, response) => {
+  response.send(notes);
+});
 
 app.get("/app/notes/:id", (request, response) => {
   const id = Number(request.params.id);
-  const note = notes.find((note) => note.id === id);
+  const note = notes.find((eachNote) => eachNote.id === id);
   if (note) {
     response.json(note);
   } else {
@@ -39,18 +50,39 @@ app.get("/app/notes/:id", (request, response) => {
   }
 });
 
-// app.delete("/app/notes/:id", (request, response) => {
-//   const id = Number(request.params.id);
-//   const note = notes.find((note) => note.id === id);
-//   response.status(204).end();
-// });
+app.delete("/app/notes/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const note = notes.find((eachNote) => eachNote.id === id);
+  response.status(204).end();
+});
+
+const generateId = () => {
+  const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
+  console.log("max Id : ", maxId);
+  return maxId + 1;
+};
 
 app.post("/app/notes", (request, response) => {
-  const note = request.body;
-  console.log(note);
+  const body = request.body;
+  console.log(request);
+  if (!body.content) {
+    return response.status(400).json({
+      error: "content missing",
+    });
+  }
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    date: new Date(),
+    id: generateId(),
+  };
+  notes = notes.concat(note);
   response.json(note);
 });
 
-const PORT = 3001;
-app.listen(PORT);
-console.log(`server running on ${PORT}`);
+app.use(express.static("build"));
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`server running on ${PORT}`);
+});

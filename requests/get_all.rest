@@ -1,2 +1,10 @@
 
-GET http://localhost:3001/app/note
+GET  http://localhost:3001/app/notes/3
+###
+POST  http://localhost:3001/app/notes
+Content-Type: application/json
+
+{
+    "content":"hala harchi",
+    "important":false
+}
