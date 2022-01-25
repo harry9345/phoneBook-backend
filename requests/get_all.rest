@@ -3,9 +3,10 @@ GET  http://localhost:3001/app/notes
 ###
 POST  http://localhost:3001/app/notes
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZWZiNjQzNmMwNzc3MzIxNjk4ODYwMSIsImlhdCI6MTY0MzExMDgyNn0.CP0k2z5JKKgq-Vl3AmQ4UOZCktHBpy_QKXJFhHj3AME
 
 {
-    "content":"hala harchi",
+    "content":"from vcs for kirikhan",
     "important":false
 }
 
@@ -16,9 +17,9 @@ Content-Type: application/json
 
 {
     "notes": [],
-    "userName": "ali",
-    "name": "ali",
-    "password": "salam"
+    "userName": "abbass",
+    "name": "abbass",
+    "password": "abbass"
 }
 
 ###  
@@ -26,7 +27,7 @@ post http://localhost:3001/app/login
 Content-Type: application/json
 
 {
-    "username": "root",
-    "name": "ali",
+    "username": "shamort",
+    "name": "shamort",
     "password": "salam"
 }
