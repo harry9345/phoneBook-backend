@@ -8,3 +8,25 @@ Content-Type: application/json
     "content":"hala harchi",
     "important":false
 }
+
+###
+
+post http://localhost:3001/app/users/
+Content-Type: application/json
+
+{
+    "notes": [],
+    "userName": "ali",
+    "name": "ali",
+    "password": "salam"
+}
+
+###  
+post http://localhost:3001/app/login
+Content-Type: application/json
+
+{
+    "username": "root",
+    "name": "ali",
+    "password": "salam"
+}

@@ -114,7 +114,7 @@ describe("when there is initially some notes saved", () => {
   });
 });
 
-describe("when there is initially one user at db", () => {
+describe("when there is initially one user in db", () => {
   beforeEach(async () => {
     await User.deleteMany({});
 
