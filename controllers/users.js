@@ -9,7 +9,7 @@ usersRouter.post("/", async (request, response) => {
   const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
   const user = new User({
-    username: body.username,
+    userName: body.userName,
     name: body.name,
     passwordHash,
   });
@@ -27,3 +27,16 @@ usersRouter.get("/", async (request, response) => {
 });
 
 module.exports = usersRouter;
+
+// {
+//   "notes": [],
+//   "userName": "kirikhan",
+//   "name": "karkon",
+//   "password": "salam"
+// }
+// {
+//   "notes": [],
+//   "userName": "ali",
+//   "name": "ali",
+//   "password": "salam"
+// }
