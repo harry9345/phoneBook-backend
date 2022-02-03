@@ -1,29 +1,29 @@
-const notesRouter = require("express").Router();
-const jwt = require("jsonwebtoken");
-const Note = require("../models/note");
-const User = require("../models/user");
+const notesRouter = require('express').Router();
+const jwt = require('jsonwebtoken');
+const Note = require('../models/note');
+const User = require('../models/user');
 
-notesRouter.get("/", async (request, response) => {
-  const notes = await Note.find({}).populate("user", { username: 1, name: 1 });
+notesRouter.get('/', async (request, response) => {
+  const notes = await Note.find({}).populate('user', { username: 1, name: 1 });
 
   response.json(notes.map((note) => note.toJSON()));
 });
 
 const getTokenFrom = (request) => {
-  const authorization = request.get("authorization");
-  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+  const authorization = request.get('authorization');
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     return authorization.substring(7);
   }
   return null;
 };
 
-notesRouter.post("/", async (request, response, next) => {
+notesRouter.post('/', async (request, response, next) => {
   const body = request.body;
   const token = getTokenFrom(request);
   const decodedToken = jwt.verify(token, process.env.SECRET);
 
   if (!decodedToken.id) {
-    return response.status(401).json({ error: "token is missing or invalid" });
+    return response.status(401).json({ error: 'token is missing or invalid' });
   }
   const user = await User.findById(decodedToken.id);
 
@@ -41,7 +41,7 @@ notesRouter.post("/", async (request, response, next) => {
   response.json(savedNote.toJSON());
 });
 
-notesRouter.get("/:id", async (request, response) => {
+notesRouter.get('/:id', async (request, response) => {
   const note = await Note.findById(request.params.id);
   if (note) {
     response.json(note.toJSON());
@@ -50,12 +50,12 @@ notesRouter.get("/:id", async (request, response) => {
   }
 });
 
-notesRouter.delete("/:id", async (request, response) => {
+notesRouter.delete('/:id', async (request, response) => {
   await Note.findByIdAndRemove(request.params.id);
   response.status(204).end();
 });
 
-notesRouter.put("/:id", (request, response, next) => {
+notesRouter.put('/:id', (request, response, next) => {
   const body = request.body;
 
   const note = {
