@@ -1,41 +1,41 @@
-const supertest = require("supertest");
-const mongoose = require("mongoose");
-const helper = require("./test_helper");
-const app = require("../app");
+const supertest = require('supertest');
+const mongoose = require('mongoose');
+const helper = require('./test_helper');
+const app = require('../app');
 const api = supertest(app);
 
-const bcrypt = require("bcrypt");
-const User = require("../models/user");
-const Note = require("../models/note");
+const bcrypt = require('bcrypt');
+const User = require('../models/user');
+const Note = require('../models/note');
 
-describe("when there is initially some notes saved", () => {
+describe('when there is initially some notes saved', () => {
   beforeEach(async () => {
     await Note.deleteMany({});
     await Note.insertMany(helper.initialNotes);
   });
 
-  test("notes are returned as json", async () => {
+  test('notes are returned as json', async () => {
     await api
-      .get("/app/notes")
+      .get('/app/notes')
       .expect(200)
-      .expect("Content-Type", /application\/json/);
+      .expect('Content-Type', /application\/json/);
   });
 
-  test("all notes are returned", async () => {
-    const response = await api.get("/app/notes");
+  test('all notes are returned', async () => {
+    const response = await api.get('/app/notes');
 
     expect(response.body).toHaveLength(helper.initialNotes.length);
   });
 
-  test("a specific note is within the returned notes", async () => {
-    const response = await api.get("/app/notes");
+  test('a specific note is within the returned notes', async () => {
+    const response = await api.get('/app/notes');
 
     const contents = response.body.map((r) => r.content);
-    expect(contents).toContain("Browser can execute only Javascript");
+    expect(contents).toContain('Browser can execute only Javascript');
   });
 
-  describe("viewing a specific note", () => {
-    test("succeeds with a valid id", async () => {
+  describe('viewing a specific note', () => {
+    test('succeeds with a valid id', async () => {
       const notesAtStart = await helper.notesInDb();
 
       const noteToView = notesAtStart[0];
@@ -43,52 +43,52 @@ describe("when there is initially some notes saved", () => {
       const resultNote = await api
         .get(`/app/notes/${noteToView.id}`)
         .expect(200)
-        .expect("Content-Type", /application\/json/);
+        .expect('Content-Type', /application\/json/);
 
       const processedNoteToView = JSON.parse(JSON.stringify(noteToView));
 
       expect(resultNote.body).toEqual(processedNoteToView);
     });
 
-    test("fails with statuscode 404 if note does not exist", async () => {
+    test('fails with statuscode 404 if note does not exist', async () => {
       const validNonexistingId = await helper.nonExistingId();
 
       await api.get(`/app/notes/${validNonexistingId}`).expect(404);
     });
 
-    test("fails with statuscode 400 id is invalid", async () => {
-      const invalidId = "5a3d5da59070081a82a3445";
+    test('fails with statuscode 400 id is invalid', async () => {
+      const invalidId = '5a3d5da59070081a82a3445';
 
       await api.get(`/app/notes/${invalidId}`).expect(400);
     });
   });
 
-  describe("addition of a new note", () => {
-    test("succeeds with valid data", async () => {
+  describe('addition of a new note', () => {
+    test('succeeds with valid data', async () => {
       const newNote = {
-        content: "async/await simplifies making async calls",
+        content: 'async/await simplifies making async calls',
         important: true,
       };
 
       await api
-        .post("/app/notes")
+        .post('/app/notes')
         .send(newNote)
         .expect(200)
-        .expect("Content-Type", /application\/json/);
+        .expect('Content-Type', /application\/json/);
 
       const notesAtEnd = await helper.notesInDb();
       expect(notesAtEnd).toHaveLength(helper.initialNotes.length + 1);
 
       const contents = notesAtEnd.map((n) => n.content);
-      expect(contents).toContain("async/await simplifies making async calls");
+      expect(contents).toContain('async/await simplifies making async calls');
     });
 
-    test("fails with status code 400 if data invalid", async () => {
+    test('fails with status code 400 if data invalid', async () => {
       const newNote = {
         important: true,
       };
 
-      await api.post("/app/notes").send(newNote).expect(400);
+      await api.post('/app/notes').send(newNote).expect(400);
 
       const notesAtEnd = await helper.notesInDb();
 
@@ -96,8 +96,8 @@ describe("when there is initially some notes saved", () => {
     });
   });
 
-  describe("deletion of a note", () => {
-    test("succeeds with status code 204 if id is valid", async () => {
+  describe('deletion of a note', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
       const notesAtStart = await helper.notesInDb();
       const noteToDelete = notesAtStart[0];
 
@@ -114,30 +114,30 @@ describe("when there is initially some notes saved", () => {
   });
 });
 
-describe("when there is initially one user in db", () => {
+describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({});
 
-    const passwordHash = await bcrypt.hash("sekret", 10);
-    const user = new User({ username: "root", passwordHash });
+    const passwordHash = await bcrypt.hash('sekret', 10);
+    const user = new User({ username: 'root', passwordHash });
 
     await user.save();
   });
 
-  test("creation succeeds with a fresh username", async () => {
+  test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: "harry9345",
-      name: "Hossein rajabi",
-      password: "salam",
+      username: 'harry9345',
+      name: 'Hossein rajabi',
+      password: 'salam',
     };
 
     await api
-      .post("/app/users")
+      .post('/app/users')
       .send(newUser)
       .expect(200)
-      .expect("Content-Type", /application\/json/);
+      .expect('Content-Type', /application\/json/);
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
@@ -146,22 +146,22 @@ describe("when there is initially one user in db", () => {
     expect(usernames).toContain(newUser.username);
   });
 
-  test("creation fails with proper statuscode and message if username already taken", async () => {
+  test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: "root",
-      name: "hossein admin",
-      password: "salam",
+      username: 'root',
+      name: 'hossein admin',
+      password: 'salam',
     };
 
     const result = await api
-      .post("/app/users")
+      .post('/app/users')
       .send(newUser)
       .expect(400)
-      .expect("Content-Type", /application\/json/);
+      .expect('Content-Type', /application\/json/);
 
-    expect(result.body.error).toContain("`username` to be unique");
+    expect(result.body.error).toContain('`username` to be unique');
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
